@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -15,10 +16,15 @@ var (
 )
 
 type Manager struct {
+	clients map[*Client]bool
+	mu sync.Mutex
 }
 
 func NewManager() *Manager {
-	return &Manager{}
+	return &Manager{
+		clients: make(map[*Client]bool),
+		mu: sync.Mutex{},
+	}
 }
 
 func (m *Manager) ServerWs(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +33,24 @@ func (m *Manager) ServerWs(w http.ResponseWriter, r *http.Request) {
 		log.Printf(`unable to upgrade %v`, err)
 		return
 	}
-	log.Printf(`upgraded %v`, conn)
+	client := NewClient(conn, m)
+	m.addClient(client)
+	go client.ReadMessages()
+	go client.WriteMessages()
+}
 
+func (m *Manager) addClient(client *Client) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.clients[client] = true
+	log.Printf(`clients %v`, m.clients)
+}
+
+func (m *Manager) removeClient(client *Client) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.clients[client]; ok {
+		client.conn.Close()
+		delete(m.clients, client)
+	}
 }
