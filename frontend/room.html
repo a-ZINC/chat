@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <h1>Room</h1>
+</body>
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
+        const username = urlParams.get('username');
+
+        if (!roomId || !username) {
+            alert("Room ID and Username are required.");
+            return;
+        }
+
+        if (window['WebSocket']) {
+            conn = new WebSocket(`ws://${window.location.host}/ws`);
+        } else {
+            console.error("WebSocket not supported in this browser.");
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 300;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-create {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-create:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-join {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+            color: white;
+            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.4);
+        }
+
+        .btn-join:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(55, 66, 250, 0.6);
+            filter: brightness(1.1);
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup {
+            background: rgba(30, 30, 50, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: popupSlide 0.3s ease;
+        }
+
+        @keyframes popupSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(40, 40, 60, 0.8);
+            color: #ffffff;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-field:focus {
+            border-color: #3742fa;
+            box-shadow: 0 0 15px rgba(55, 66, 250, 0.4);
+            background: rgba(50, 50, 70, 0.9);
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-popup {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+            color: white;
+            box-shadow: 0 3px 10px rgba(55, 66, 250, 0.3);
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.5);
+        }
+
+        .btn-cancel {
+            background: rgba(60, 60, 80, 0.8);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(70, 70, 90, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result.success {
+            background: rgba(46, 125, 50, 0.2);
+            color: #66bb6a;
+            border: 1px solid rgba(102, 187, 106, 0.3);
+        }
+
+        .result.error {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(239, 83, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Chat Rooms</h1>
+        <div class="button-group">
+            <button class="btn btn-create" onclick="openCreatePopup()">
+                ✨ Create Room
+            </button>
+            <button class="btn btn-join" onclick="openJoinPopup()">
+                🔗 Join Room
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Room Popup -->
+    <div id="createPopup" class="popup-overlay">
+        <div class="popup">
+            <button class="close-btn" onclick="closePopup('createPopup')">&times;</button>
+            <h2>Create New Room</h2>
+            <div class="input-group">
+                <input type="text" id="createRoomName" class="input-field" placeholder="Enter room name" maxlength="20">
+            </div>
+            <div class="input-group">
+                <input type="text" id="createUsername" class="input-field" placeholder="Your username" maxlength="15">
+            </div>
+            <div class="popup-buttons">
+                <button class="btn-popup btn-confirm" onclick="createRoom()">Create</button>
+                <button class="btn-popup btn-cancel" onclick="closePopup('createPopup')">Cancel</button>
+            </div>
+            <div id="createResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Join Room Popup -->
+    <div id="joinPopup" class="popup-overlay">
+        <div class="popup">
+            <button class="close-btn" onclick="closePopup('joinPopup')">&times;</button>
+            <h2>Join Room</h2>
+            <div class="input-group">
+                <input type="text" id="joinRoomId" class="input-field" placeholder="Enter room ID" maxlength="10">
+            </div>
+            <div class="input-group">
+                <input type="text" id="joinUsername" class="input-field" placeholder="Your username" maxlength="15">
+            </div>
+            <div class="popup-buttons">
+                <button class="btn-popup btn-confirm" onclick="joinRoom()">Join</button>
+                <button class="btn-popup btn-cancel" onclick="closePopup('joinPopup')">Cancel</button>
+            </div>
+            <div id="joinResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+
+        const rooms = [];
+        function openCreatePopup() {
+            document.getElementById('createPopup').style.display = 'flex';
+            document.getElementById('createRoomName').focus();
+        }
+
+        function openJoinPopup() {
+            document.getElementById('joinPopup').style.display = 'flex';
+            document.getElementById('joinRoomId').focus();
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+            clearInputs();
+            hideResults();
+        }
+
+        function clearInputs() {
+            document.getElementById('createRoomName').value = '';
+            document.getElementById('createUsername').value = '';
+            document.getElementById('joinRoomId').value = '';
+            document.getElementById('joinUsername').value = '';
+        }
+
+        function hideResults() {
+            document.getElementById('createResult').style.display = 'none';
+            document.getElementById('joinResult').style.display = 'none';
+        }
+
+        function showResult(elementId, message, type) {
+            const resultEl = document.getElementById(elementId);
+            resultEl.textContent = message;
+            resultEl.className = `result ${type}`;
+            resultEl.style.display = 'block';
+        }
+
+        function createRoom() {
+            const roomName = document.getElementById('createRoomName').value.trim();
+            const username = document.getElementById('createUsername').value.trim();
+
+            if (!roomName) {
+                showResult('createResult', 'Please enter a room name', 'error');
+                return;
+            }
+
+            if (!username) {
+                showResult('createResult', 'Please enter your username', 'error');
+                return;
+            }
+
+            const id = Math.random().toString(36).substring(2, 10).toUpperCase();
+            rooms.push({
+                id: id,
+                name: roomName,
+                creator: username
+            });
+            console.log(`Room created: ${id} - ${roomName} by ${username}`);
+            showResult('createResult', `Room created: ${id}`, 'success');
+            joinRoom(id, username);
+            
+            setTimeout(() => {
+                closePopup('createPopup');
+            }, 3000);
+        }
+
+        function joinRoom(roomId="", username="") {
+            roomId = roomId || document.getElementById('joinRoomId').value.trim().toUpperCase();
+            username = username || document.getElementById('joinUsername').value.trim();
+
+            if (!roomId) {
+                showResult('joinResult', 'Please enter a room ID', 'error');
+                return;
+            }
+
+            if (!username) {
+                showResult('joinResult', 'Please enter your username', 'error');
+                return;
+            }
+
+            showResult('joinResult', `Joined room: ${roomId}`, 'success');
+            window.location.href = `http://localhost:3000/room?roomId=${roomId}&username=${username}`
+            
+            setTimeout(() => {
+                closePopup('joinPopup');
+            }, 3000);
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('popup-overlay')) {
+                closePopup(event.target.id);
+            }
+        });
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById('createPopup').style.display === 'flex') {
+                    createRoom();
+                } else if (document.getElementById('joinPopup').style.display === 'flex') {
+                    joinRoom();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
