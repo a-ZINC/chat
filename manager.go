@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -18,12 +20,43 @@ var (
 type Manager struct {
 	clients map[*Client]bool
 	mu sync.Mutex
+	handlers map[string]EventHandler
 }
 
 func NewManager() *Manager {
-	return &Manager{
+	m := &Manager{
 		clients: make(map[*Client]bool),
 		mu: sync.Mutex{},
+		handlers: make(map[string]EventHandler),
+	}
+	m.setupHandler()
+	return m
+}
+
+func(m *Manager) setupHandler() {
+	m.handlers[message] = m.sendMessage
+}
+
+func(m *Manager) sendMessage(eve Event, client *Client) error {
+	msg, err := json.Marshal(eve)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("msg: %v", msg)
+	return client.conn.WriteMessage(websocket.TextMessage, msg)
+}
+
+func(m *Manager) eventRoute(eve Event, client *Client) {
+	fmt.Printf("eve %v", eve)
+	if handler, ok := m.handlers[eve.Type]; ok {
+		err := handler(eve, client)
+		if err != nil {
+			fmt.Printf("error sending Event through handler")
+			return;
+		}
+	} else {
+		fmt.Printf("error sending Event")
+		return;
 	}
 }
 
@@ -43,7 +76,6 @@ func (m *Manager) addClient(client *Client) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.clients[client] = true
-	log.Printf(`clients %v`, m.clients)
 }
 
 func (m *Manager) removeClient(client *Client) {

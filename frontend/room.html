@@ -80,7 +80,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .messages-container::-webkit-scrollbar {
@@ -100,18 +100,19 @@
         .message {
             display: flex;
             gap: 12px;
-            max-width: 70%;
-            animation: messageSlide 0.3s ease;
+            max-width: 75%;
+            animation: messageSlide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            margin-bottom: 8px;
         }
 
         @keyframes messageSlide {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(15px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -123,7 +124,7 @@
         .message-avatar {
             width: 40px;
             height: 40px;
-            background: linear-gradient(45deg, #ff4757, #ff3742);
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b7a 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -132,81 +133,122 @@
             color: white;
             font-size: 14px;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .message.own .message-avatar {
-            background: linear-gradient(45deg, #3742fa, #2f3542);
+            background: linear-gradient(135deg, #3742fa 0%, #5352ed 100%);
+            box-shadow: 0 4px 12px rgba(55, 66, 250, 0.3);
         }
 
-        .message-content {
-            background: rgba(40, 40, 60, 0.8);
-            padding: 12px 18px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .message-bubble {
+            position: relative;
+            background: rgba(45, 45, 70, 0.9);
+            padding: 16px 20px;
+            border-radius: 20px 20px 20px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
-        .message.own .message-content {
-            background: linear-gradient(45deg, #3742fa, #2f3542);
+        .message-bubble:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #5865f2 0%, #7289da 100%);
             border: none;
+            border-radius: 20px 20px 8px 20px;
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.3);
+        }
+
+        .message.own .message-bubble:hover {
+            box-shadow: 0 6px 25px rgba(88, 101, 242, 0.4);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 15px;
         }
 
         .message-username {
             font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 4px;
+            color: rgba(255, 255, 255, 0.9) !important;
             font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .message.own .message-username {
-            text-align: right;
-        }
-
-        .message-text {
-            color: #ffffff;
-            line-height: 1.4;
-            word-wrap: break-word;
+            color: rgba(255, 255, 255, 1) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .message-time {
             font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 400;
         }
 
         .message.own .message-time {
-            text-align: right;
+            color: rgba(255, 255, 255, 0.85) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-text {
+            color: #ffffff !important;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 0.95em;
+            letter-spacing: 0.2px;
+            font-weight: 400;
+        }
+
+        .message.own .message-text {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .system-message {
             text-align: center;
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9em;
-            padding: 8px 20px;
+            padding: 12px 24px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
+            border-radius: 25px;
             align-self: center;
-            margin: 10px 0;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
         .input-container {
-            background: rgba(20, 20, 40, 0.8);
+            background: rgba(20, 20, 40, 0.9);
             padding: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             gap: 15px;
             align-items: center;
+            backdrop-filter: blur(15px);
         }
 
         .message-input {
             flex: 1;
-            padding: 12px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 22px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 25px;
             font-size: 16px;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             background: rgba(40, 40, 60, 0.8);
             color: #ffffff;
+            backdrop-filter: blur(10px);
         }
 
         .message-input::placeholder {
@@ -215,47 +257,50 @@
 
         .message-input:focus {
             border-color: #3742fa;
-            box-shadow: 0 0 15px rgba(55, 66, 250, 0.4);
+            box-shadow: 0 0 20px rgba(55, 66, 250, 0.4);
             background: rgba(50, 50, 70, 0.9);
+            transform: scale(1.02);
         }
 
         .send-button {
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border: none;
             border-radius: 50%;
-            background: linear-gradient(45deg, #3742fa, #2f3542);
+            background: linear-gradient(135deg, #3742fa 0%, #4834d4 100%);
             color: white;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            box-shadow: 0 3px 10px rgba(55, 66, 250, 0.3);
+            box-shadow: 0 4px 15px rgba(55, 66, 250, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .send-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.5);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(55, 66, 250, 0.6);
         }
 
         .send-button:active {
-            transform: scale(0.95);
+            transform: translateY(-1px) scale(0.98);
         }
 
         .connection-status {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 12px 24px;
+            border-radius: 25px;
             font-size: 14px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
         }
 
         .connection-status.connected {
@@ -271,17 +316,81 @@
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: currentColor;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Message tail styles */
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            left: -8px;
+            border: 8px solid transparent;
+            border-bottom-color: rgba(45, 45, 70, 0.9);
+            border-left: none;
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.own .message-bubble::before {
+            left: auto;
+            right: -8px;
+            border-bottom-color: #5865f2;
+            border-left: 8px solid transparent;
+            border-right: none;
+            border-bottom-right-radius: 6px;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 75%;
+            padding: 16px 0;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 16px 20px;
+            background: rgba(45, 45, 70, 0.9);
+            border-radius: 20px 20px 20px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -344,24 +453,75 @@
             document.getElementById('usernameDisplay').textContent = username;
             document.getElementById('userIcon').textContent = username.charAt(0).toUpperCase();
 
-            // Connect to WebSocket
             connectWebSocket();
-
-            // Set up event listeners
             setupEventListeners();
         };
+
+        class Event {
+            constructor(type, data) {
+                this.type = type
+                this.data = data
+            }
+        }
+
+        function routeEvent(event) {
+            switch (event.type) {
+                case 'message':
+                    displayMessage(event.data);
+                    break;
+                case 'system':
+                    displaySystemMessage(event.data);
+                    break;
+                case 'typing':
+                    // Handle typing indicator
+                    break;
+                default:
+                    console.warn('Unknown event type:', event.type);
+            }
+        }
+
+        function sendEvent(event) {
+            if (conn && conn.readyState === WebSocket.OPEN) {
+                conn.send(JSON.stringify(event));
+            } else {
+                console.error('WebSocket is not open. Cannot send event:', event);
+            }
+        }
 
         function connectWebSocket() {
             if (window['WebSocket']) {
                 conn = new WebSocket(`ws://${window.location.host}/ws`);
 
+                conn.onopen = function() {
+                    updateConnectionStatus(true);
+                    // Join room when connected
+                    const joinMessage = {
+                        type: 'join',
+                        roomId: roomId,
+                        username: username
+                    };
+                    conn.send(JSON.stringify(joinMessage));
+                };
+
+                conn.onclose = function() {
+                    updateConnectionStatus(false);
+                    displaySystemMessage('Connection lost. Please refresh the page to reconnect.');
+                };
+
+                conn.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    updateConnectionStatus(false);
+                };
+
                 conn.onmessage = function(ev) {
-                    const message = JSON.parse(ev.data)
-                    console.log(message)
-                    handleIncomingMessage(message)
-                }
-                
-                
+                    try {
+                        const message = JSON.parse(ev.data);
+                        console.log('Received message:', message);
+                        handleIncomingMessage(message);
+                    } catch (e) {
+                        console.error('Error parsing message:', e);
+                    }
+                };
             } else {
                 console.error("WebSocket not supported in this browser.");
                 alert("Your browser doesn't support WebSocket. Please use a modern browser.");
@@ -389,36 +549,55 @@
             if (!messageText || !conn || conn.readyState !== WebSocket.OPEN) {
                 return;
             }
+            console.log("inside")
 
-            conn.send(messageText)
-            const message = {
+            // Send message to server
+            const data = {
                 username: username,
-                text: messageText
+                text: messageText,
+                timestamp: new Date().toISOString(),
             }
-            displayMessage(message)
+            const event = new Event('message', data);
+            conn.send(JSON.stringify(event));
+
+            // Display own message immediately with 'own' flag
+            displayMessage(data);
+
+            // Clear input
+            messageInput.value = '';
         }
 
         function handleIncomingMessage(message) {
-            displayMessage(message)
-            
+            // Handle different message types
+            const event = Object.assign(new Event(), message);
+            routeEvent(event);
+        }
+
+        function isMyMessage(name) {
+            return username === name
         }
 
         function displayMessage(message) {
             const messagesContainer = document.getElementById('messagesContainer');
             const messageEl = document.createElement('div');
-            messageEl.className = `message ${message.own ? 'own' : ''}`;
+            messageEl.className = `message ${isMyMessage(message.username) ? 'own' : ''}`;
 
             const time = new Date(message.timestamp || new Date()).toLocaleTimeString([], { 
                 hour: '2-digit', 
                 minute: '2-digit' 
             });
 
+            // Get first letter of username for avatar
+            const avatarLetter = message.username.charAt(0).toUpperCase();
+
             messageEl.innerHTML = `
-                <div class="message-avatar">${message.username}</div>
-                <div class="message-content">
-                    <div class="message-username">${message.username}</div>
+                <div class="message-avatar">${avatarLetter}</div>
+                <div class="message-bubble">
+                    <div class="message-header">
+                        <div class="message-username">${message.username}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
                     <div class="message-text">${escapeHtml(message.text)}</div>
-                    <div class="message-time">${time}</div>
                 </div>
             `;
 

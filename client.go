@@ -10,24 +10,19 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Message struct {
-	Text     string `json:"text"`
-	Username string `json:"username"`
-}
-
 var Clients map[*Client]bool
 
 type Client struct {
 	conn    *websocket.Conn
 	manager *Manager
-	egress  chan []byte
+	egress  chan Event
 }
 
 func NewClient(conn *websocket.Conn, manager *Manager) *Client {
 	return &Client{
 		conn:    conn,
 		manager: manager,
-		egress:  make(chan []byte),
+		egress:  make(chan Event),
 	}
 }
 
@@ -43,20 +38,18 @@ func (c *Client) ReadMessages() {
 			}
 			break
 		}
-		fmt.Printf(`msg %v %s`, messageType, msg)
+		fmt.Printf("msg %v %s \n", messageType, msg)
 		for val := range c.manager.clients {
 			if val == c {
 				continue
 			}
-
-			ms, err := json.Marshal(Message{
-				Text:     string(msg),
-				Username: "system",
-			})
+			event := Event{}
+			err := json.Unmarshal(msg, &event)
 			if err != nil {
+				fmt.Printf("error sending message %v", err)
 				continue
 			}
-			val.egress <- ms
+			val.egress <- event
 		}
 	}
 }
@@ -72,13 +65,12 @@ func (c *Client) WriteMessages() {
 			if !ok {
 				if err := c.conn.WriteMessage(websocket.CloseMessage, nil); err != nil {
 					log.Printf("connection closed.")
+					return
 				}
 				return
 			}
-			err := c.conn.WriteMessage(websocket.TextMessage, message)
-			if err != nil {
-				log.Printf("failed to send message")
-			}
+			c.manager.eventRoute(message, c)
+			
 		case <-ticker.C:
 			fmt.Printf("hii")
 		}
